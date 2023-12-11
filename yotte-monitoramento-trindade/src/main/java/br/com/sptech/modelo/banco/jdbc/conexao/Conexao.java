@@ -54,7 +54,7 @@ public class Conexao {
         dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
         dataSource.setUrl("jdbc:mysql://localhost:3306/yotte");
         dataSource.setUsername("yotte");
-        dataSource.setPassword("yotte2023");
+        dataSource.setPassword("Gf#2023");
         return dataSource;
     }
 
