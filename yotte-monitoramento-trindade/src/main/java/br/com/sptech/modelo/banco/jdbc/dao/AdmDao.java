@@ -14,8 +14,8 @@ public class AdmDao extends UsuarioDao {
 
     public List buscarFuncEmail(String email, Integer tempo) {
         Conexao conexao = new Conexao();
-        JdbcTemplate conSQLServer = conexao.getConexaoDoBancoSQLServer();
-        JdbcTemplate conMySQL = conexao.getConexaoDoBancoMySQL();
+        JdbcTemplate conSQLServer = conexao.getConexaoDoBanco();
+        JdbcTemplate conMySQL = conexao.getConexaoDoBanco();
 
         String sql = "SELECT COUNT(*) FROM usuario WHERE email LIKE ?;";
         Integer emailFunc = conSQLServer.queryForObject(sql, Integer.class, email);
