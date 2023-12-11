@@ -22,7 +22,7 @@ public class Conexao {
 
 
                 dataSource.setUrl("jdbc:sqlserver://54.205.98.102; database=yotte; user=sa; passaword=yotte2023; trustServerCertificate=true;");
-                dataSource.setUsername("sa");
+                dataSource.setUsername("yotte");
                 dataSource.setPassword("yotte2023");
 
 //                dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
