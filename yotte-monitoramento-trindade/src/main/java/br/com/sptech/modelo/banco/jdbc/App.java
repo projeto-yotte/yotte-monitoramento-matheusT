@@ -216,7 +216,7 @@ public class App {
                                     novaMaquina.setModelo(modelo);
 
                                     usuarioDao.salvarUsuario(novoUsuario);
-                                    maquinaDao.salvarMaquina(novaMaquina, usuarioDao.buscarIdUsuario(novoUsuario), usuarioDao.buscarIdToken(matricula), conMySQL, conSql);
+                                    maquinaDao.salvarMaquina(novaMaquina, usuarioDao.buscarIdUsuario(novoUsuario), usuarioDao.buscarIdToken(matricula));
                                     maquina01.buscarIdMaquina(usuarioDao.buscarIdUsuario(novoUsuario));
 
                                     logado = true;

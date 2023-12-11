@@ -25,15 +25,14 @@ public class Maquina {
     }
 
     public void buscarDadosFixosDosComponentes() {
-        memoriaDao.buscarDadosFixo(idMaquina, null, null);
+        memoriaDao.buscarDadosFixo(idMaquina);
         cpuDao.buscarDadosFixo(idMaquina);
-        discoDao.buscarDadosFixo(idMaquina, null, null);
+        discoDao.buscarDadosFixo(idMaquina);
     }
 
     public void buscarIdMaquina(Integer idUsuario) {
         Conexao conexao = new Conexao();
-        JdbcTemplate con = conexao.getConexaoDoBancoSQLServer();
-        JdbcTemplate conMySQL = conexao.getConexaoDoBancoMySQL();
+        JdbcTemplate con = conexao.getConexaoDoBanco();
 
         String sql = "SELECT id_maquina FROM maquina WHERE fk_usuario = ?";
         idMaquina = con.queryForObject(sql, Integer.class, idUsuario);
@@ -41,11 +40,10 @@ public class Maquina {
 
     public Boolean isComponenteSalvo(Integer fkMaquina) {
         Conexao conexao = new Conexao();
-        JdbcTemplate con = conexao.getConexaoDoBancoSQLServer();
-        JdbcTemplate conMySQL = conexao.getConexaoDoBancoMySQL();
+        JdbcTemplate con = conexao.getConexaoDoBanco();
 
         String sql = "SELECT count(*) FROM componente WHERE fk_maquina = ?";
-        Integer count = con.queryForObject(sql, Integer.class, fkMaquina) == null ? conMySQL.queryForObject(sql, Integer.class, fkMaquina) : con.queryForObject(sql, Integer.class, fkMaquina);
+        Integer count = con.queryForObject(sql, Integer.class, fkMaquina);
 
         return count > 0;
     }
@@ -54,13 +52,9 @@ public class Maquina {
                                   ModelCpu novaCapturaCpu,
                                   ModelDisco novaCapturaDisco) {
 
-        Conexao conexao = new Conexao();
-        JdbcTemplate con = conexao.getConexaoDoBancoSQLServer();
-        JdbcTemplate conMySQL = conexao.getConexaoDoBancoMySQL();
-
-        memoriaDao.salvarCapturaFixa(novaCapturaRam, idMaquina, con, conMySQL);
+        memoriaDao.salvarCapturaFixa(novaCapturaRam, idMaquina);
         cpuDao.salvarCapturaFixa(novaCapturaCpu, idMaquina);
-        discoDao.salvarCapturaFixa(novaCapturaDisco, idMaquina, con, conMySQL);
+        discoDao.salvarCapturaFixa(novaCapturaDisco, idMaquina);
 
 
         componenteSalvos = true;
@@ -70,24 +64,15 @@ public class Maquina {
                                       ModelCpu novaCapturaCpu,
                                       ModelDisco novaCapturaDisco) {
 
-        Conexao conexao = new Conexao();
-        JdbcTemplate con = conexao.getConexaoDoBancoSQLServer();
-        JdbcTemplate conMySQL = conexao.getConexaoDoBancoMySQL();
-
-        memoriaDao.salvarCapturaDinamica(novaCapturaRam, con, conMySQL);
+        memoriaDao.salvarCapturaDinamica(novaCapturaRam);
         cpuDao.salvarCapturaDinamica(novaCapturaCpu);
-        discoDao.salvarCapturaDinamica(novaCapturaDisco, con, conMySQL);
+        discoDao.salvarCapturaDinamica(novaCapturaDisco);
     }
 
     public void capturarJanelasProcessos(ModelJanela novaCapturaJanela,
                                          ModelProcesso novaCapturaProcesso) {
-
-        Conexao conexao = new Conexao();
-        JdbcTemplate con = conexao.getConexaoDoBancoSQLServer();
-        JdbcTemplate conMySQL = conexao.getConexaoDoBancoMySQL();
-
-        janelaDao.atualizarJanela(novaCapturaJanela, idMaquina, con, conMySQL);
-        processoDao.atualizarProcesso(novaCapturaProcesso, idMaquina, con, conMySQL);
+        janelaDao.atualizarJanela(novaCapturaJanela, idMaquina);
+        processoDao.atualizarProcesso(novaCapturaProcesso, idMaquina);
     }
 
 

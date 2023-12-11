@@ -2,98 +2,57 @@ package br.com.sptech.modelo.banco.jdbc.dao;
 
 import br.com.sptech.modelo.banco.jdbc.conexao.Conexao;
 import br.com.sptech.modelo.banco.jdbc.modelo.ModelMemoria;
+import br.com.sptech.modelo.banco.jdbc.modelo.ModelUsuario;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 public class MemoriaDao {
-    private Integer idInfoMySQL;
-    private Integer idInfoSQLServer;
+    private Integer idInfo;
 
-    public void salvarCapturaFixa(ModelMemoria novaCapturaRam, Integer idMaquina, JdbcTemplate conexaoMySQL, JdbcTemplate conexaoSQLServer) {
+    public void salvarCapturaFixa(ModelMemoria novaCapturaRam, Integer idMaquina) {
         if (idMaquina != null) {
-            try {
-                if (conexaoSQLServer == null) {
-                    // Salvar no MySQL
-                    conexaoMySQL.update("INSERT INTO info_componente (total) VALUES (?)", novaCapturaRam.getRamTotal());
+            Conexao conexao = new Conexao();
+            JdbcTemplate con = conexao.getConexaoDoBanco();
 
-                    idInfoMySQL = getIdInfoMySQL(conexaoMySQL); // Usando o MySQL para buscar o ID
-                }else {
-                    // Salvar no SQL Server
-                    conexaoSQLServer.update("INSERT INTO info_componente (total) VALUES (?)", novaCapturaRam.getRamTotal());
+            con.update("INSERT INTO info_componente (total)  VALUES (?)", novaCapturaRam.getRamTotal());
 
-                    // Usando o SQL Server para salvar o componente
-                    conexaoSQLServer.update("INSERT INTO componente (nome, parametro, fk_info, fk_maquina) VALUES (?, ?, ?, ?)", "memoria", "bytes", idInfoMySQL, idMaquina);
+            idInfo = con.queryForObject("SELECT SCOPE_IDENTITY()" , Integer.class);
 
-                    // Usando o SQL Server para salvar o parametro_componente
-                    conexaoSQLServer.update("INSERT INTO parametro_componente (valor_minimo, valor_maximo, fk_componente) VALUES (?, ?, ?)", 30, 80, idInfoMySQL);
-                }
+            con.update("INSERT INTO componente (nome, parametro, fk_info, fk_maquina) VALUES (?, ?, ?, ?)", "memoria", "bytes", idInfo, idMaquina);
 
-            } catch (Exception e) {
-                // Tratar exceções
-                e.printStackTrace();
-            }
+            con.update("INSERT INTO parametro_componente (valor_minimo, valor_maximo, fk_componente) VALUES ( ?, ?, ?)", 30, 80, idInfo);
+
         } else {
             throw new RuntimeException("Precisa existir uma máquina no banco primeiro.");
         }
     }
 
-    private Integer getIdInfoMySQL(JdbcTemplate conexaoMySQL) {
-        String sql = "SELECT LAST_INSERT_ID()";
-        return conexaoMySQL.queryForObject(sql, Integer.class);
-    }
-
-    public void salvarCapturaDinamica(ModelMemoria novaCapturaRam, JdbcTemplate conexaoMySQL, JdbcTemplate conexaoSQLServer) {
-        if (idInfoMySQL != null) {
-            try {
-                if (conexaoSQLServer == null) {
-                    // Salvar no MySQL
-                    conexaoMySQL.update("INSERT INTO dados_captura (uso, data_captura, fk_componente, desligada) VALUES (?, ?, ?, ?)",
-                            novaCapturaRam.getMemoriaUso(),
-                            novaCapturaRam.getDataCaptura(),
-                            idInfoMySQL,
-                            novaCapturaRam.getDesligada()
-                    );
-                }else {
-
-                    // Salvar no SQL Server
-                    conexaoSQLServer.update("INSERT INTO dados_captura (uso, data_captura, fk_componente, desligada) VALUES (?, ?, ?, ?)",
-                            novaCapturaRam.getMemoriaUso(),
-                            novaCapturaRam.getDataCaptura(),
-                            idInfoMySQL,
-                            novaCapturaRam.getDesligada()
-                    );
-                }
-            } catch (Exception e) {
-                // Tratar exceções
-                e.printStackTrace();
-            }
+    public void salvarCapturaDinamica(ModelMemoria novaCapturaRam) {
+        if (idInfo != null) {
+            Conexao conexao = new Conexao();
+            JdbcTemplate con = conexao.getConexaoDoBanco();
+            con.update("INSERT INTO dados_captura (uso, data_captura, fk_componente, desligada) VALUES (?, ?, ?, ?)",
+                    novaCapturaRam.getMemoriaUso(),
+                    novaCapturaRam.getDataCaptura(),
+                    idInfo,
+                    novaCapturaRam.getDesligada()
+            );
         } else {
             throw new RuntimeException("ID não foi capturado. Execute salvarCapturaFixa() primeiro.");
         }
     }
 
-    public void buscarDadosFixo(Integer idMaquina, JdbcTemplate conexaoMySQL, JdbcTemplate conexaoSQLServer) {
-        try {
-            if (conexaoSQLServer == null) {
-                // Buscar no MySQL
-                String sqlMySQL = "SELECT c.id_componente\n" +
-                        "FROM componente c\n" +
-                        "JOIN info_componente i ON c.fk_info = i.id_info\n" +
-                        "JOIN maquina m ON c.fk_maquina = m.id_maquina\n" +
-                        "WHERE c.nome = ? AND m.id_maquina = ?";
-                idInfoMySQL = conexaoMySQL.queryForObject(sqlMySQL, Integer.class, "memoria", idMaquina);
-            }else {
+    public void buscarDadosFixo(Integer idMaquina) {
 
-                // Buscar no SQL Server
-                String sqlSQLServer = "SELECT c.id_componente\n" +
-                        "FROM componente c\n" +
-                        "JOIN info_componente i ON c.fk_info = i.id_info\n" +
-                        "JOIN maquina m ON c.fk_maquina = m.id_maquina\n" +
-                        "WHERE c.nome = ? AND m.id_maquina = ?";
-                idInfoSQLServer = conexaoSQLServer.queryForObject(sqlSQLServer, Integer.class, "memoria", idMaquina);
-            }
-        } catch (Exception e) {
-            // Tratar exceções
-            e.printStackTrace();
-        }
+        Conexao conexao = new Conexao();
+        JdbcTemplate con = conexao.getConexaoDoBanco();
+
+        String sql = "SELECT c.id_componente\n" +
+                "FROM componente c\n" +
+                "JOIN info_componente i ON c.fk_info = i.id_info\n" +
+                "JOIN maquina m ON c.fk_maquina = m.id_maquina\n" +
+                "WHERE c.nome = ? AND m.id_maquina = ?";
+        idInfo = con.queryForObject(sql, Integer.class, "memoria", idMaquina);
     }
 }
+
+
