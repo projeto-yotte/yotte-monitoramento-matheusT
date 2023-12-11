@@ -315,118 +315,118 @@ public class App {
 
 
         if (logado.equals(true)) {
-            if (usuarioDao.buscarFkTipoUsuario(novoUsuario).equals(3) || usuarioDao.buscarFkTipoUsuario(usuario).equals(3)) {
-                // Obtenha os dados da API Looca
-                Memoria memoria = looca.getMemoria();
 
-                Processador cpu = looca.getProcessador();
+            // Obtenha os dados da API Looca
+            Memoria memoria = looca.getMemoria();
 
-                DiscoGrupo grupoDeDiscos = looca.getGrupoDeDiscos();
-                List<Disco> discos = grupoDeDiscos.getDiscos();
+            Processador cpu = looca.getProcessador();
 
-                JanelaGrupo grupodDeJanelas = looca.getGrupoDeJanelas();
-                List<Janela> janelas = grupodDeJanelas.getJanelas();
+            DiscoGrupo grupoDeDiscos = looca.getGrupoDeDiscos();
+            List<Disco> discos = grupoDeDiscos.getDiscos();
 
-                ProcessoGrupo grupoDeProcessos = looca.getGrupoDeProcessos();
-                List<Processo> processos = grupoDeProcessos.getProcessos();
+            JanelaGrupo grupodDeJanelas = looca.getGrupoDeJanelas();
+            List<Janela> janelas = grupodDeJanelas.getJanelas();
 
-                ModelMemoria novaCapturaRam = new ModelMemoria();
-                ModelCpu novaCapturaCpu = new ModelCpu();
-                ModelDisco novaCapturaDisco = new ModelDisco();
-                ModelJanela novaCapturaJanela = new ModelJanela();
-                ModelProcesso novaCapturaProcesso = new ModelProcesso();
+            ProcessoGrupo grupoDeProcessos = looca.getGrupoDeProcessos();
+            List<Processo> processos = grupoDeProcessos.getProcessos();
+
+            ModelMemoria novaCapturaRam = new ModelMemoria();
+            ModelCpu novaCapturaCpu = new ModelCpu();
+            ModelDisco novaCapturaDisco = new ModelDisco();
+            ModelJanela novaCapturaJanela = new ModelJanela();
+            ModelProcesso novaCapturaProcesso = new ModelProcesso();
 
 
-                // IF para captura fixa, acontece apenas 1 vez.
-                if (!maquina01.isComponenteSalvo(maquina01.getIdMaquina())) {
-                    novaCapturaRam.setRamTotal(memoria.getTotal());
-                    novaCapturaCpu.setNumCPUsFisicas(cpu.getNumeroCpusFisicas());
-                    novaCapturaCpu.setNumCPUsLogicas(cpu.getNumeroCpusLogicas());
+            // IF para captura fixa, acontece apenas 1 vez.
+            if (!maquina01.isComponenteSalvo(maquina01.getIdMaquina())) {
+                novaCapturaRam.setRamTotal(memoria.getTotal());
+                novaCapturaCpu.setNumCPUsFisicas(cpu.getNumeroCpusFisicas());
+                novaCapturaCpu.setNumCPUsLogicas(cpu.getNumeroCpusLogicas());
+
+                for (Disco disco : discos) {
+                    novaCapturaDisco.setTotalDisco(disco.getTamanho());
+                }
+
+                maquina01.capturarDadosFixo(novaCapturaRam, novaCapturaCpu, novaCapturaDisco);
+
+            } else {
+                maquina01.buscarDadosFixosDosComponentes();
+            }
+            ;
+
+            // Scheduler de 10 segundos para capturas dinâmicas
+            scheduler.scheduleAtFixedRate(() -> {
+                try {
+                    // Crie uma nova instância da sua classe com os dados capturados
+                    novaCapturaRam.setMemoriaUso(memoria.getEmUso());
+                    novaCapturaRam.setDataCaptura(new Date());
+                    novaCapturaRam.setDesligada(false);
+
+                    novaCapturaCpu.setUsoCpu(cpu.getUso());
+                    novaCapturaCpu.setFreq(cpu.getFrequencia());
+                    novaCapturaCpu.setDataCaptura(new Date());
+                    novaCapturaCpu.setDesligada(false);
 
                     for (Disco disco : discos) {
-                        novaCapturaDisco.setTotalDisco(disco.getTamanho());
+                        novaCapturaDisco.setBytesEscrita(disco.getBytesDeEscritas());
+                        novaCapturaDisco.setDataCaptura(new Date());
+                        novaCapturaDisco.setBytesLeitura(disco.getBytesDeLeitura());
+                        novaCapturaDisco.setEscritas(disco.getEscritas());
+                        novaCapturaDisco.setLeituras(disco.getLeituras());
+                        novaCapturaDisco.setTamanhoFila(disco.getTamanhoAtualDaFila());
+                        novaCapturaDisco.setDesligada(false);
                     }
 
-                    maquina01.capturarDadosFixo(novaCapturaRam, novaCapturaCpu, novaCapturaDisco);
+                    int tamanho = Math.max(windowsInfo.size(), Math.max(janelas.size(), processos.size()));
 
-                } else {
-                    maquina01.buscarDadosFixosDosComponentes();
-                }
-                ;
+                    for (int i = 0; i < tamanho; i++) {
+                        Janela janela = (i < janelas.size()) ? janelas.get(i) : null;
+                        Processo processo = (i < processos.size()) ? processos.get(i) : null;
+                        ActiveWindowDetector.WindowInfo ws = (i < windowsInfo.size()) ? windowsInfo.get(i) : new ActiveWindowDetector.WindowInfo("", 0, false, null);
+                        ActiveWindowDetector activeWindowDetector = new ActiveWindowDetector();
 
-                // Scheduler de 10 segundos para capturas dinâmicas
-                scheduler.scheduleAtFixedRate(() -> {
-                    try {
-                        // Crie uma nova instância da sua classe com os dados capturados
-                        novaCapturaRam.setMemoriaUso(memoria.getEmUso());
-                        novaCapturaRam.setDataCaptura(new Date());
-                        novaCapturaRam.setDesligada(false);
+                        long pidJanela = (janela != null && janela.getPid() != null) ? janela.getPid() : (long) ws.getProcessId();
 
-                        novaCapturaCpu.setUsoCpu(cpu.getUso());
-                        novaCapturaCpu.setFreq(cpu.getFrequencia());
-                        novaCapturaCpu.setDataCaptura(new Date());
-                        novaCapturaCpu.setDesligada(false);
+                        // Verificar se o PID da janela corresponde ao PID do ws
+                        if (ws != null && ws.getProcessId() != 0 && pidJanela != 0 && pidJanela != ws.getProcessId()) {
+                            System.out.println("Aviso: PID da janela não corresponde ao PID do ws.");
+                        } else {
+                            novaCapturaJanela.setPid(pidJanela);
+                            novaCapturaJanela.setTitulo((janela != null && janela.getTitulo() != null) ? janela.getTitulo() : ((ws != null) ? ws.getWindowName() : null));
+                            novaCapturaJanela.setComando((janela != null && janela.getComando() != null) ? janela.getComando() : "");
+                            novaCapturaJanela.setVisivel(activeWindowDetector.isPidInForeground(novaCapturaJanela.getPid()));
+                            novaCapturaJanela.setDataCaptura(new Date());
 
-                        for (Disco disco : discos) {
-                            novaCapturaDisco.setBytesEscrita(disco.getBytesDeEscritas());
-                            novaCapturaDisco.setDataCaptura(new Date());
-                            novaCapturaDisco.setBytesLeitura(disco.getBytesDeLeitura());
-                            novaCapturaDisco.setEscritas(disco.getEscritas());
-                            novaCapturaDisco.setLeituras(disco.getLeituras());
-                            novaCapturaDisco.setTamanhoFila(disco.getTamanhoAtualDaFila());
-                            novaCapturaDisco.setDesligada(false);
-                        }
+                            novaCapturaProcesso.setPid((processo != null) ? processo.getPid() : null);
+                            novaCapturaProcesso.setUsoCpu((processo != null && processo.getUsoCpu() != null) ? processo.getUsoCpu() : ((ws != null && ws.getPerformanceInfo() != null) ? ws.getPerformanceInfo().getCpuUsage() : 0.0));
+                            novaCapturaProcesso.setUsoMemoria((processo != null && processo.getUsoMemoria() != null) ? processo.getUsoMemoria() : ((ws != null && ws.getPerformanceInfo() != null) ? ws.getPerformanceInfo().getMemoryUsage() : 0.0));
+                            novaCapturaProcesso.setBytesUtilizados((processo != null) ? processo.getBytesUtilizados() : null);
 
-                        int tamanho = Math.max(windowsInfo.size(), Math.max(janelas.size(), processos.size()));
-
-                        for (int i = 0; i < tamanho; i++) {
-                            Janela janela = (i < janelas.size()) ? janelas.get(i) : null;
-                            Processo processo = (i < processos.size()) ? processos.get(i) : null;
-                            ActiveWindowDetector.WindowInfo ws = (i < windowsInfo.size()) ? windowsInfo.get(i) : new ActiveWindowDetector.WindowInfo("", 0, false, null);
-                            ActiveWindowDetector activeWindowDetector = new ActiveWindowDetector();
-
-                            long pidJanela = (janela != null && janela.getPid() != null) ? janela.getPid() : (long) ws.getProcessId();
-
-                            // Verificar se o PID da janela corresponde ao PID do ws
-                            if (ws != null && ws.getProcessId() != 0 && pidJanela != 0 && pidJanela != ws.getProcessId()) {
-                                System.out.println("Aviso: PID da janela não corresponde ao PID do ws.");
-                            } else {
-                                novaCapturaJanela.setPid(pidJanela);
-                                novaCapturaJanela.setTitulo((janela != null && janela.getTitulo() != null) ? janela.getTitulo() : ((ws != null) ? ws.getWindowName() : null));
-                                novaCapturaJanela.setComando((janela != null && janela.getComando() != null) ? janela.getComando() : "");
-                                novaCapturaJanela.setVisivel(activeWindowDetector.isPidInForeground(novaCapturaJanela.getPid()));
-                                novaCapturaJanela.setDataCaptura(new Date());
-
-                                novaCapturaProcesso.setPid((processo != null) ? processo.getPid() : null);
-                                novaCapturaProcesso.setUsoCpu((processo != null && processo.getUsoCpu() != null) ? processo.getUsoCpu() : ((ws != null && ws.getPerformanceInfo() != null) ? ws.getPerformanceInfo().getCpuUsage() : 0.0));
-                                novaCapturaProcesso.setUsoMemoria((processo != null && processo.getUsoMemoria() != null) ? processo.getUsoMemoria() : ((ws != null && ws.getPerformanceInfo() != null) ? ws.getPerformanceInfo().getMemoryUsage() : 0.0));
-                                novaCapturaProcesso.setBytesUtilizados((processo != null) ? processo.getBytesUtilizados() : null);
-
-                                if (novaCapturaJanela.getPid() != 0 && (novaCapturaJanela.getTitulo() != null || ws.getWindowName() != null)) {
-                                    maquina01.capturarJanelasProcessos(novaCapturaJanela, novaCapturaProcesso);
-                                }
+                            if (novaCapturaJanela.getPid() != 0 && (novaCapturaJanela.getTitulo() != null || ws.getWindowName() != null)) {
+                                maquina01.capturarJanelasProcessos(novaCapturaJanela, novaCapturaProcesso);
                             }
                         }
-
-
-                        maquina01.capturarDadosDinamico(novaCapturaRam, novaCapturaCpu, novaCapturaDisco);
-
-                        // Imprima uma mensagem de sucesso no console
-                        System.out.println("\033[1;91mDados de memória capturados e salvos com sucesso!\033[0m");
-                        log("Dados de memória capturados e salvos com sucesso" + memoria);
-                    } catch (Exception e) {
-                        // Imprima quaisquer erros no console
-                        e.printStackTrace();
-                        System.err.println("\033[1;35mErro ao capturar e salvar dados de memória.\033[0m");
-                        logError("Erro ao capturar e salvar dados de memória", e);
                     }
-                }, 0, 10, TimeUnit.SECONDS);
-            }
 
-            // Fechando os Scanners pra não derreter a memória (ou a RAM sei lá)
-            leitor.close();
-            leitorTexto.close();
+
+                    maquina01.capturarDadosDinamico(novaCapturaRam, novaCapturaCpu, novaCapturaDisco);
+
+                    // Imprima uma mensagem de sucesso no console
+                    System.out.println("\033[1;91mDados de memória capturados e salvos com sucesso!\033[0m");
+                    log("Dados de memória capturados e salvos com sucesso" + memoria);
+                } catch (Exception e) {
+                    // Imprima quaisquer erros no console
+                    e.printStackTrace();
+                    System.err.println("\033[1;35mErro ao capturar e salvar dados de memória.\033[0m");
+                    logError("Erro ao capturar e salvar dados de memória", e);
+                }
+            }, 0, 10, TimeUnit.SECONDS);
         }
+
+        // Fechando os Scanners pra não derreter a memória (ou a RAM sei lá)
+        leitor.close();
+        leitorTexto.close();
     }
 }
+
 
