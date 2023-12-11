@@ -1,4 +1,5 @@
 package br.com.sptech.modelo.banco.jdbc;
+
 import br.com.sptech.modelo.banco.jdbc.conexao.Conexao;
 import br.com.sptech.modelo.banco.jdbc.dao.*;
 import br.com.sptech.modelo.banco.jdbc.modelo.*;
@@ -15,7 +16,6 @@ import com.github.britooo.looca.api.group.processos.Processo;
 import com.github.britooo.looca.api.group.processos.ProcessoGrupo;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import javax.swing.*;
 import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -32,10 +32,11 @@ public class App {
     public static void setLogUserName(String userName) {
         logUserName = userName;
     }
+
     private static String getLogFileName() {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         String dateStr = sdf.format(new Date());
-        return dateStr + "-" + logUserName + "-.txt";
+        return dateStr + "-" + logUserName + ".txt";
     }
 
     public static void log(String message) {
@@ -103,39 +104,36 @@ public class App {
         ActiveWindowDetector windowDetector = new ActiveWindowDetector();
         List<ActiveWindowDetector.WindowInfo> windowsInfo = windowDetector.getActiveWindowInfo();
 
-        for (ActiveWindowDetector.WindowInfo ws : windowsInfo) {
-            if (ws != null) {
-                System.out.println("Window Name: " + ws.getWindowName());
-                System.out.println("PID: " + ws.getProcessId());
-                System.out.println("Is in Foreground: " + ws.isInForeground());
-            }
-        }
+        // for (ActiveWindowDetector.WindowInfo ws : windowsInfo) {
+        //     if (ws != null) {
+        //         System.out.println("Window Name: " + ws.getWindowName());
+        //         System.out.println("PID: " + ws.getProcessId());
+        //         System.out.println("Is in Foreground: " + ws.isInForeground());
+        //     }
+        // }
 
         // ===============================================
-        String[] opcoes = {"Não", "Sim", "Sair"};
 
-        int escolha = JOptionPane.showOptionDialog(
-                null,
-                "Já tem cadastro:",
-                "Yotte Trindade",
-                JOptionPane.YES_NO_CANCEL_OPTION, // Tipo de opções
-                JOptionPane.QUESTION_MESSAGE,    // Tipo de ícone
-                null,                           // Ícone personalizado (use null para o padrão)
-                opcoes,                         // Conjunto de opções
-                opcoes[2]                       // Opção padrão selecionada
-        );
+        System.out.println("""
+                        \033[1;31m
+                        :::   :::  ::::::::  ::::::::::: ::::::::::: ::::::::::
+                        :+:   :+: :+:    :+:     :+:         :+:     :+:
+                         +:+ +:+  +:+    +:+     +:+         +:+     +:+
+                          +#++:   +#+    +:+     +#+         +#+     +#++:++#
+                           +#+    +#+    +#+     +#+         +#+     +#+
+                           #+#    #+#    #+#     #+#         #+#     #+#
+                           ###     ########      ###         ###     ##########
+                \033[0m
+                \033[1;34m
+                Já tem cadastro?
+                - 0 (Caso não)
+                - 1 (Caso sim)
+                - 2 (Para sair da aplicação)
+                \033[0m
+                """);
+        Integer opcao = leitor.nextInt();
 
-        if (escolha == 0) {
-            System.out.println("Opção 1 selecionada");
-        } else if (escolha == 1) {
-            System.out.println("Opção 2 selecionada");
-        } else {
-            System.out.println("Opção Cancelar ou fechar");
-        }
-
-//        Integer opcao = leitor.nextInt();
-
-        if (escolha == 0) {
+        if (opcao == 0) {
             // Cadastro de novo usuário
             String nome;
             String email;
@@ -152,78 +150,38 @@ public class App {
 
             do {
                 try {
-                    System.out.println("Fazer cadastro...");
+                    System.out.println("\033[1;31mFazer cadastro...\033[0m");
 
-                    nome = JOptionPane.showInputDialog(
-                            null,
-                            "Digite seu nome:",
-                            "Yotte Trindade",
-                            JOptionPane.PLAIN_MESSAGE
-                    );
+                    System.out.println("\033[1;34mDigite seu nome:\033[0m");
+                    nome = leitorTexto.nextLine();
 
-                    email = JOptionPane.showInputDialog(
-                            null,
-                            "Digite seu e-mail:",
-                            "Yotte Trindade",
-                            JOptionPane.PLAIN_MESSAGE
-                    );
+                    System.out.println("\033[1;34mDigite seu email:\033[0m");
+                    email = leitorTexto.nextLine();
+                    App.setLogUserName(email);
 
-                    senha = JOptionPane.showInputDialog(
-                            null,
-                            "Digite sua senha:",
-                            "Yotte Trindade",
-                            JOptionPane.PLAIN_MESSAGE
-                    );
+                    System.out.println("\033[1;34mDigite sua senha:\033[0m");
+                    senha = leitorTexto.nextLine();
 
-                    area = JOptionPane.showInputDialog(
-                            null,
-                            "Digite sua área:",
-                            "Yotte Trindade",
-                            JOptionPane.PLAIN_MESSAGE
-                    );
+                    System.out.println("\033[1;34mDigite seu área de atuação:\033[0m");
+                    area = leitorTexto.nextLine();
 
-                    cargo = JOptionPane.showInputDialog(
-                            null,
-                            "Digite seu cargo:",
-                            "Yotte Trindade",
-                            JOptionPane.PLAIN_MESSAGE
-                    );
+                    System.out.println("\033[1;34mDigite seu cargo:\033[0m");
+                    cargo = leitorTexto.nextLine();
 
-                    empresa = JOptionPane.showInputDialog(
-                            null,
-                            "Digite sua empresa:",
+                    System.out.println("\033[1;34mDigite sua empresa:\033[0m");
+                    empresa = leitorTexto.nextLine();
 
-                            "Yotte Trindade",
-                            JOptionPane.PLAIN_MESSAGE
-                    );
+                    System.out.println("\033[1;34mDigite seu IP:\033[0m");
+                    ip = leitorTexto.nextLine();
 
-                    ip = JOptionPane.showInputDialog(
-                            null,
-                            "Digite seu IP:",
-                            "Yotte Trindade",
-                            JOptionPane.PLAIN_MESSAGE
-                    );
+                    System.out.println("\033[1;34mDigite o modelo do notebook:\033[0m");
+                    modelo = leitorTexto.nextLine();
 
-                    modelo = JOptionPane.showInputDialog(
-                            null,
-                            "Digite o modelo do notebook:",
-                            "Yotte Trindade",
-                            JOptionPane.PLAIN_MESSAGE
-                    );
+                    System.out.println("\033[1;34mDigite qual SO você utiliza:\033[0m");
+                    so = leitorTexto.nextLine();
 
-                    so = JOptionPane.showInputDialog(
-                            null,
-                            "Digite seu SO:",
-                            "Yotte Trindade",
-                            JOptionPane.PLAIN_MESSAGE
-                    );
-
-                    matricula = JOptionPane.showInputDialog(
-                            null,
-                            "Digite seu token:",
-                            "Yotte Trindade",
-                            JOptionPane.PLAIN_MESSAGE
-                    );
+                    System.out.println("\033[1;34mDigite seu token de acesso:\033[0m");
+                    matricula = leitorTexto.nextLine();
 
                     Boolean isSenhaValida = validacoesUsuario.isSenhaValida(senha);
                     Boolean isSenhaComplexa = validacoesUsuario.isSenhaComplexa(senha);
@@ -263,26 +221,26 @@ public class App {
 
                                     logado = true;
                                     log("Cadastro bem-sucedido para o usuário " + nome);
-                                    log("Área de atuação " + area);
+                                    log("Área de atuação" + area);
                                     log("Sistema Operacional" + so);
-                                    System.out.println("Cadastrado com sucesso!");
+                                    System.out.println("\033[1;31mCadastrado com sucesso!\033[0m");
                                 }
                             } else {
-                                System.out.println("Seu token não é válido!");
+                                System.out.println("\033[1;35mSeu token não é válido!\033[0m");
                             }
                         } catch (Exception e) {
-                            logError("Erro durante o processo de cadastro", e);
+                            logError("\033[1;35mErro durante o processo de cadastro\033[0m", e);
                         }
-                        log("Email e senha válidas " + email);
+                        log("\033[1;35mEmail e senha válidas " + email);
                     } else {
-                        System.out.println("Dados inválidos, faça o cadastro novamente!!");
+                        System.out.println("\033[1;35mDados inválidos, faça o cadastro novamente!!\033[0m");
                     }
                 } catch (Exception e) {
-                    logError("Erro durante a verificação de senha e email", e);
+                    logError("\033[1;35mErro durante a verificação de senha e email\033[0m", e);
                 }
             } while (!todasValidacoes);
 
-        } else if (escolha == 1) {
+        } else if (opcao == 1) {
             // Login
             Boolean todasValidacoesLogin = false;
             String validarEmail;
@@ -291,21 +249,11 @@ public class App {
             do {
                 try {
 
-                    validarEmail = JOptionPane.showInputDialog(
-                            null,
-                            "Digite seu e-mail:",
-                            "Yotte Trindade",
-                            JOptionPane.PLAIN_MESSAGE
-                    );
+                    System.out.println("\033[1;34mDigite seu email:\033[0m");
+                    validarEmail = leitorTexto.nextLine();
                     App.setLogUserName(validarEmail);
-                    validarSenha = JOptionPane.showInputDialog(
-                            null,
-                            "Digite sua Senha:",
-                            "Yotte Trindade",
-                            JOptionPane.PLAIN_MESSAGE
-                    );
-
-                    System.out.println(validarEmail);
+                    System.out.println("\033[1;34mDigite sua senha:\033[0m");
+                    validarSenha = leitorTexto.nextLine();
 
                     usuario.setEmail(validarEmail);
                     usuario.setSenha(validarSenha);
@@ -313,7 +261,7 @@ public class App {
                     if (usuarioDao.isUsuarioExistente(usuario)) {
                         todasValidacoesLogin = true;
 
-                        System.out.println("Id usuario: " + usuarioDao.buscarIdUsuario(usuario));
+                        System.out.println("\033[1;31mId usuario:\033[0m" + usuarioDao.buscarIdUsuario(usuario));
                         System.out.println(usuarioDao.buscarFkTipoUsuario(usuario));
 
                         System.out.println("ou");
@@ -322,15 +270,15 @@ public class App {
                             Scanner scanneremail = new Scanner(System.in);
                             Scanner scanner01 = new Scanner(System.in);
                             ;
-                            System.out.println("O que deseja fazer?\n" +
+                            System.out.println("\033[1;34mO que deseja fazer?\n" +
                                     "                - 0 (Ver usuario especifico)\n" +
-                                    "                - 1 (Lista de funcionarios)\n"
-                                   );
+                                    "                - 1 (Lista de funcionarios)\033[0m\n"
+                            );
                             Integer opcao2 = scanner01.nextInt();
                             if (opcao2 == 0) {
-                                System.out.println("Digite o email do funcionario que voce quer ver:");
+                                System.out.println("\033[1;34mDigite o email do funcionario que voce quer ver:\033[0m");
                                 String email = scanneremail.nextLine();
-                                System.out.println("Deseja ver os dados coletados de quantas horas atras:");
+                                System.out.println("\033[1;34mDeseja ver os dados coletados de quantas horas atras:\033[0m");
                                 Integer tempo = scanner01.nextInt();
 
                                 System.out.println(admDao.buscarFuncEmail(email, tempo));
@@ -338,34 +286,32 @@ public class App {
                                 System.out.println(admDao.buscarListFunc(usuario));
                             }
                         }
-                        log("Login bem-sucedido para o usuário: " + usuario.getEmail());
-                        if (usuarioDao.isUsuarioExistente(usuario)){
+                        log("\033[1;31mLogin bem-sucedido para o usuário: \033[0m" + usuario.getEmail());
+                        if (usuarioDao.isUsuarioExistente(usuario)) {
                             maquina01.buscarIdMaquina(usuarioDao.buscarIdUsuario(usuario));
                         }
 
                     } else {
-                        System.out.println("Email ou senha incorretas. Tente novamente!");
+                        System.out.println("\033[1;35mEmail ou senha incorretas. Tente novamente!\033[0m");
                     }
                 } catch (Exception e) {
-                    logError("Erro durante o processo de login", e);
+                    logError("\033[1;35mErro durante o processo de login\033[0m", e);
                 }
             } while (!todasValidacoesLogin);
 
 
-            System.out.println("Login realizado com sucesso! \uD83D\uDE04");
+            System.out.println("\033[1;31mLogin realizado com sucesso! \033[0m \uD83D\uDE04");
 
             // Restante do código para capturar dados de memória
-        } else if (escolha == 2) {
-            System.out.println("Saindo da aplicação.");
+        } else if (opcao == 2) {
+            System.out.println("\033[1;31mSaindo da aplicação.\033[0m");
         } else {
-            System.out.println("Opção inválida.");
+            System.out.println("\033[1;35mOpção inválida.\033[0m");
         }
 
         // Fecha os recursos necessários, como Scanners
         leitor.close();
         leitorTexto.close();
-
-
 
 
         if (logado.equals(true)) {
@@ -448,7 +394,7 @@ public class App {
                                 novaCapturaJanela.setPid(pidJanela);
                                 novaCapturaJanela.setTitulo((janela != null && janela.getTitulo() != null) ? janela.getTitulo() : ((ws != null) ? ws.getWindowName() : null));
                                 novaCapturaJanela.setComando((janela != null && janela.getComando() != null) ? janela.getComando() : "");
-//                            novaCapturaJanela.setVisivel(activeWindowDetector.isPidInForeground(novaCapturaJanela.getPid()));
+                                novaCapturaJanela.setVisivel(activeWindowDetector.isPidInForeground(novaCapturaJanela.getPid()));
                                 novaCapturaJanela.setDataCaptura(new Date());
 
                                 novaCapturaProcesso.setPid((processo != null) ? processo.getPid() : null);
@@ -456,9 +402,9 @@ public class App {
                                 novaCapturaProcesso.setUsoMemoria((processo != null && processo.getUsoMemoria() != null) ? processo.getUsoMemoria() : ((ws != null && ws.getPerformanceInfo() != null) ? ws.getPerformanceInfo().getMemoryUsage() : 0.0));
                                 novaCapturaProcesso.setBytesUtilizados((processo != null) ? processo.getBytesUtilizados() : null);
 
-//                            if (novaCapturaJanela.getPid() != 0 && (novaCapturaJanela.getTitulo() != null || ws.getWindowName() != null)) {
-//                                maquina01.capturarJanelasProcessos(novaCapturaJanela, novaCapturaProcesso);
-//                            }
+                                if (novaCapturaJanela.getPid() != 0 && (novaCapturaJanela.getTitulo() != null || ws.getWindowName() != null)) {
+                                    maquina01.capturarJanelasProcessos(novaCapturaJanela, novaCapturaProcesso);
+                                }
                             }
                         }
 
@@ -466,12 +412,12 @@ public class App {
                         maquina01.capturarDadosDinamico(novaCapturaRam, novaCapturaCpu, novaCapturaDisco);
 
                         // Imprima uma mensagem de sucesso no console
-                        System.out.println("Dados de memória capturados e salvos com sucesso!");
+                        System.out.println("\033[1;91mDados de memória capturados e salvos com sucesso!\033[0m");
                         log("Dados de memória capturados e salvos com sucesso" + memoria);
                     } catch (Exception e) {
                         // Imprima quaisquer erros no console
                         e.printStackTrace();
-                        System.err.println("Erro ao capturar e salvar dados de memória.");
+                        System.err.println("\033[1;35mErro ao capturar e salvar dados de memória.\033[0m");
                         logError("Erro ao capturar e salvar dados de memória", e);
                     }
                 }, 0, 10, TimeUnit.SECONDS);

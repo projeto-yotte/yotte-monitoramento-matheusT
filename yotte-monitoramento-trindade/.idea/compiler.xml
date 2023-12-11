@@ -7,8 +7,11 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="yotte_monitoramento" />
-        <module name="yotte-monitoramento-trindade" />
+        <module name="yotte-monitoramento" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="yotte-monitoramento-trindade" target="17" />
+    </bytecodeTargetLevel>
   </component>
 </project>

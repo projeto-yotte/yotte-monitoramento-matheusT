@@ -1,0 +1,1 @@
+2023-12-10 23:12:09 - Erro durante o processo de login: Failed to obtain JDBC Connection; nested exception is java.sql.SQLException: Cannot create JDBC driver of class 'com.microsoft.sqlserver.jdbc.SQLServerDriver' for connect URL 'jdbc:mysql://localhost:3306/yotte'
