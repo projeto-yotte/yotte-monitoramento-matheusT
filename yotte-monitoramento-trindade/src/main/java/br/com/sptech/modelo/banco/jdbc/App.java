@@ -195,8 +195,8 @@ public class App {
                             if (usuarioDao.isTokenValido(matricula)) {
                                 if (usuarioDao.buscarEmpresaPorNome(empresa) != null) {
                                     Conexao con = new Conexao();
-                                    JdbcTemplate conMySQL = con.getConexaoDoBancoMySQL();
-                                    JdbcTemplate conSql = con.getConexaoDoBancoSQLServer();
+                                    JdbcTemplate conMySQL = con.getConexaoDoBanco();
+                                    JdbcTemplate conSql = con.getConexaoDoBanco();
 
                                     Integer fkEmpresa = usuarioDao.buscarEmpresaPorNome(empresa);
 

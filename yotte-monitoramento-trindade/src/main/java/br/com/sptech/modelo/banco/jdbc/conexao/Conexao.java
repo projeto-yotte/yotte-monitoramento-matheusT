@@ -14,10 +14,23 @@ public class Conexao {
             if (!conexaoEstabelecida) {
                 BasicDataSource dataSource = new BasicDataSource();
                 // Configurações para o MySQL
+
+//                dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
+//                dataSource.setUrl("jdbc:mysql://localhost:3306/yotte");
+//                dataSource.setUsername("root");
+//                dataSource.setPassword("58214213");
+
+
+                // Configurações para o MySQL
                 dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
                 dataSource.setUrl("jdbc:mysql://localhost:3306/yotte");
                 dataSource.setUsername("yotte");
                 dataSource.setPassword("yotte2023");
+
+//                dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
+//                dataSource.setUrl("jdbc:mysql://localhost:3306/yotte");
+//                dataSource.setUsername("yotte");
+//                dataSource.setPassword("yotte2023");
 
                 this.conexaoDoBanco = new JdbcTemplate(dataSource);
 
