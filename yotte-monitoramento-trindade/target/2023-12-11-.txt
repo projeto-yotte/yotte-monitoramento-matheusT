@@ -1,0 +1,3 @@
+2023-12-11 13:16:52 - Conexões com o banco de dados estabelecidas com sucesso.
+2023-12-11 13:16:52 - Conexões com o banco de dados estabelecidas com sucesso.
+2023-12-11 13:16:52 - Conexões com o banco de dados estabelecidas com sucesso.

@@ -31,6 +31,7 @@ public class Conexao {
 
                 App.log("Conexões com o banco de dados estabelecidas com sucesso.");
                 conexaoEstabelecida = true;  // Marcamos as conexões como estabelecidas
+
             }
         } catch (Exception e) {
             App.logError("Erro ao estabelecer as conexões com o banco de dados.", e);
@@ -45,10 +46,15 @@ public class Conexao {
         dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver"); // Driver MySQL
 
         // Configurações específicas do SQL Server
-        dataSource.addConnectionProperty("trustServerCertificate", "true");
-        dataSource.setDriverClassLoader(getClass().getClassLoader());
-        dataSource.setDriverClassName("com.microsoft.sqlserver.jdbc.SQLServerDriver"); // Driver SQL Server
+//        dataSource.addConnectionProperty("trustServerCertificate", "true");
+//        dataSource.setDriverClassLoader(getClass().getClassLoader());
+//        dataSource.setDriverClassName("com.microsoft.sqlserver.jdbc.SQLServerDriver"); // Driver SQL Server
 
+        // Configurações para o MySQL
+        dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
+        dataSource.setUrl("jdbc:mysql://localhost:3306/yotte");
+        dataSource.setUsername("yotte");
+        dataSource.setPassword("yotte2023");
         return dataSource;
     }
 
