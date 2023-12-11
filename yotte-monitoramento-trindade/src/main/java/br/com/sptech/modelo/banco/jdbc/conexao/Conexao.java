@@ -10,7 +10,7 @@ public class Conexao {
 
     private static final String MYSQL_URL = "jdbc:mysql://localhost:3306/yotte";
     private static final String MYSQL_USERNAME = "yotte";
-    private static final String MYSQL_PASSWORD = "yotte2023";
+    private static final String MYSQL_PASSWORD = "Gf#2023";
 
     private static final String SQL_SERVER_URL = "jdbc:sqlserver://54.205.98.102;database=yotte;user=sa;password=Projetoyotte2023;";
     private static final String SQL_SERVER_USERNAME = "sa";
